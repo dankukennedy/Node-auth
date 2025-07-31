@@ -14,6 +14,12 @@ const ImageSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required:true
+    },
+    description:{
+      type:String,
+      require: true,
+      trim: true,
+      maxLength: [100,'Image description cannot be more than 100 characters']
     }
 
 }, {timestamps: true});

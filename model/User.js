@@ -24,7 +24,7 @@ const  UserSchema = new mongoose.Schema({
         default: 'user'
     },
     contact:{
-        type: Number,
+        type: String,
         require:true,
         unique:true,
         trim: true

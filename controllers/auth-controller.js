@@ -117,4 +117,28 @@ const loginUser = async (req,res)=>{
      }
   }
 
-  module.exports = { loginUser, registerUser, changePassword}
+  const updateUserDetails = async(req,res)=>{
+     try {
+      const userId =  req.userInfo.userId;
+
+      const {username,email,bio,contact} =  req.body;
+        
+          if(!username|| !email || !bio){
+            res.status(400).json({success:false, message:'username, email and Bio cannot be left empty'})
+          }
+       //find  the current logged in user
+       const user = await User.findById(userId);
+
+       if(!user){
+        res.status(400).json({success:false, message:'user not found'})
+      }
+           const updateUser = await User.findByIdAndUpdate(userId, {email,username,contact,bio},{new:true},{runValidators:true})
+            //await user.save();
+            res.status(200).json({success: true,message: 'User details updated successfully',user: updateUser});
+     } catch (error) {
+      console.log(error);
+      res.status(500).json({success:false, message:'Something Went wrong  Please try again'});
+     }
+  }
+
+  module.exports = { loginUser, registerUser, changePassword,updateUserDetails}
