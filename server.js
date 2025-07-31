@@ -20,6 +20,7 @@ app.use('/api/home', homeRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/image', uploadImageRoutes)
 
+
 app.listen(PORT, ()=>{
     console.log(`Server is now listening to PORT: ${PORT}`)
 })
