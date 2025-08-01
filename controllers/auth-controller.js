@@ -1,9 +1,9 @@
-const User = require("../model/User")
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+import User from "../model/User.js"
+import  bcrypt from 'bcryptjs'
+import  jwt from 'jsonwebtoken'
 
 //register controller
-const registerUser = async (req,res)=>{
+export const registerUser = async (req,res)=>{
   try {
        //extract user information from request body
        const {username, email, password, contact, bio, role} = req.body;
@@ -49,7 +49,7 @@ const registerUser = async (req,res)=>{
 }
 
 //login controller
-const loginUser = async (req,res)=>{
+export const loginUser = async (req,res)=>{
     try {
       const {username, password } = req.body
       //find the current user exists in the database or not
@@ -82,7 +82,7 @@ const loginUser = async (req,res)=>{
   }
 
 
-  const changePassword = async(req, res)=>{
+  export const changePassword = async(req, res)=>{
      try {
        const userId =  req.userInfo.userId
        //extract old and new password
@@ -117,7 +117,7 @@ const loginUser = async (req,res)=>{
      }
   }
 
-  const updateUserDetails = async(req,res)=>{
+  export const updateUserDetails = async(req,res)=>{
      try {
       const userId =  req.userInfo.userId;
 
@@ -141,4 +141,4 @@ const loginUser = async (req,res)=>{
      }
   }
 
-  module.exports = { loginUser, registerUser, changePassword,updateUserDetails}
+ 

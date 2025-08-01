@@ -1,9 +1,9 @@
-const Image = require('../model/image')
-const { uploadToCloudinary} = require('../helpers/cloudinaryHelper')
-const fs = require('fs')
-const cloudinary = require('../config/cloudinary')
+import Image from '../model/image.js'
+import { uploadToCloudinary} from '../helpers/cloudinaryHelper.js'
+import fs from 'fs'
+import cloudinary from '../config/cloudinary.js'
 
-const  uploadImageController = async(req,res)=>{
+export const  uploadImageController = async(req,res)=>{
      try {
 
         //check if file is missing in req object
@@ -50,7 +50,7 @@ const  uploadImageController = async(req,res)=>{
      }
 } 
 
-const fetchImagesController = async(req,res)=>{
+export const fetchImagesController = async(req,res)=>{
     try {
         const page = parseInt(req.query.page) || 1;
         const limit  =  parseInt(req.query.limit) || 2;
@@ -60,7 +60,7 @@ const fetchImagesController = async(req,res)=>{
         const sortOrder = req.query.sortOrder === 'asc' ? 1: -1
 
         const totalImages =  await Image.countDocuments();
-        totalPages = Math.ceil(totalImages/limit)
+        const totalPages = Math.ceil(totalImages/limit)
 
         const sortObj = {};
         sortObj[sortBy] = sortOrder;
@@ -82,7 +82,7 @@ const fetchImagesController = async(req,res)=>{
     }
 }
 
-const deleteImageController = async(req,res)=>{
+export const deleteImageController = async(req,res)=>{
     try{
         
         const getCurrentIfOfImageToBeDeleted = req.params.id;
@@ -115,7 +115,3 @@ const deleteImageController = async(req,res)=>{
     }
 }
 
-
-module.exports = {
-    uploadImageController,fetchImagesController,deleteImageController
-}

@@ -1,27 +1,47 @@
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken';
 
-const authMiddleware = (req, res, next) =>{
-    
-  const authHeader =  req.headers['authorization'];
-  console.log(authHeader);
-  const token = authHeader && authHeader.split(" ")[1]
-  if(!token){
-    return res.status(401).json({success:false, message:'Access denied. No token provided. Please login to continue' })
-  }
+// Setting Authentication
+export const authMiddleware = (req, res, next) => {
+    try {
+        const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+        
+        if (!authHeader) {
+            return res.status(401).json({
+                success: false,
+                message: 'Authorization header missing'
+            });
+        }
 
-  //decode this token
-  try {
-     decodedTokenInfo =  jwt.verify(token, process.env.JWT_SECRET_KEY)
-     console.log(decodedTokenInfo);
+        const token = authHeader.split(' ')[1];
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token not found in authorization header'
+            });
+        }
 
-     req.userInfo = decodedTokenInfo
+        // Verify and decode the token
+        const decodedTokenInfo = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        console.log('Decoded Token:', decodedTokenInfo);
 
-     next();
-  } catch (error) {
-    return res.status(500).json({success:false, message:'Access denied. No token provided. Please login to continue' })
-  }
+        // Attach user info to request
+        req.userInfo = decodedTokenInfo;
 
-
-}
-
-module.exports = authMiddleware
+        next();
+    } catch (error) {
+        console.error('Authentication Error:', error.message);
+        
+        if (error instanceof jwt.JsonWebTokenError) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid or expired token'
+            });
+        }
+        
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error during authentication'
+        });
+    }
+};
