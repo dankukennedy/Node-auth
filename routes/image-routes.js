@@ -6,7 +6,7 @@ import {uploadImageController, fetchImagesController, deleteImageController}  fr
 
 const router = express.Router()
 //upload the image
-router.post("/upload", authMiddleware, isAdminUser,multer.single('image'), uploadImageController) 
+router.post("/upload", authMiddleware, isAdminUser, multer.single('image'), uploadImageController) 
 //to get all image
 router.get("/all",authMiddleware, fetchImagesController)
 //delete Image route

@@ -109,7 +109,7 @@ export const loginUser = async (req,res)=>{
         user.password = newHashedPassword
         await user.save();
 
-        res.status(200).json({success:false,message:'Password Change Successfully'})
+        res.status(200).json({success:true,message:'Password Change Successfully'})
 
       } catch (error) {
       console.log(error);
@@ -141,4 +141,66 @@ export const loginUser = async (req,res)=>{
      }
   }
 
- 
+
+  export const deleteUser = async(req,res)=>{
+    try {
+      const userId =  req.userInfo.userId;
+      const userToDeleteId =  req.params.id
+      //check if the userId is present in the request
+      if(!userId){
+         res.status(400).json({success:false, message:'authorize user not found'})
+      }
+      //find  the current logged in user
+       const user = await User.findById(userId);
+        if(!user){
+        res.status(400).json({success:false, message:'user not found'})
+      }
+      //check if the user is admin or not
+      if(user.role !=="admin"){
+        res.status(403).json({success:false, message:'Access Denied! Admin right required'})
+      }
+      //check if the user to be deleted is present or not
+      if(!userToDeleteId){
+          res.status(400).json({success:false, message:'user ID not found to be deleted'})
+      }
+      //preventing admin from deleting themselves
+      if(userToDeleteId === user){
+        res.status(400).json({success:false, message:"Admins cannot delete themselves"})
+      }
+      //find the user to be deleted
+      const deletedUser = await User.findByIdAndDelete(userToDeleteId)
+          res.status(200).json({success: true,message: 'User deleted successfully', deletedUser});
+    }catch(error){
+       console.log(error);
+      res.status(500).json({success:false, message:'Something Went wrong  Please try again'});
+     }
+
+  }
+
+  export const findAllUsers = async(req,res)=>{
+    try {
+     const userId =  req.userInfo.userId;
+      //check if the userId is present in the request 
+      if(!userId){
+         res.status(400).json({success:false, message:'authorize user not found'})
+      }
+      //find  the current logged in user
+       const user = await User.findById(userId);
+        if(!user){
+        res.status(400).json({success:false, message:'user not found'})
+        }
+      //check if the user is admin or not
+      if(user.role !=="admin"){
+        res.status(403).json({success:false, message:'Access Denied! Admin right required'})
+      } 
+      //find all users
+      const allUsers = await User.find({}).select('-password -__v').sort({createdAt: -1});
+      if(allUsers.length === 0){
+        return res.status(404).json({success:false, message:'No users found'});
+      } 
+      res.status(200).json({success: true, message: 'All users fetched successfully', users: allUsers});
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({success:false, message:'Something Went wrong  Please try again'});
+    }
+  }
